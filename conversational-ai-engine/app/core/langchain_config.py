@@ -3,7 +3,7 @@ from langchain.memory import ConversationBufferWindowMemory, ConversationSummary
 from langchain.schema import SystemMessage, HumanMessage, AIMessage
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.chains import ConversationChain, LLMChain
-from langchain.callbacks import AsyncCallbackHandler
+from langchain_core.callbacks import AsyncCallbackHandler
 from langchain.cache import RedisCache
 from typing import Optional, Dict, Any, List
 import redis

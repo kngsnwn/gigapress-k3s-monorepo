@@ -1,14 +1,15 @@
 'use client'
 
-import { useState, useRef, KeyboardEvent } from 'react';
+import { useState, useRef, useImperativeHandle, forwardRef, KeyboardEvent } from 'react';
 import { websocketService } from '@/lib/websocket';
 import { useConversationStore } from '@/lib/store';
 import { Send, Paperclip, Mic, Square } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import { useI18n } from '@/lib/i18n';
+import { InputBoxRef } from './ChatInterface';
 
-export default function InputBox() {
+const InputBox = forwardRef<InputBoxRef>((props, ref) => {
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -16,8 +17,19 @@ export default function InputBox() {
   const [demoResponseIndex, setDemoResponseIndex] = useState(0);
   const { t } = useI18n();
 
+  // Expose methods to parent component
+  useImperativeHandle(ref, () => ({
+    setInputValue: (text: string) => {
+      setInput(text);
+      // Focus textarea after setting value
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 0);
+    }
+  }), []);
+
   const handleSend = () => {
-    if (!input.trim()) return;
+    if (!input || !input.trim()) return;
     
     if (!isTestMode && !isConnected) {
       toast.error('Not connected to server. Please wait...');
@@ -32,9 +44,9 @@ export default function InputBox() {
       status: 'sending' as const
     };
 
-    addMessage(userMessage);
-    
     if (isTestMode) {
+      addMessage(userMessage);
+      
       // Simulate message being sent
       setTimeout(() => {
         updateMessage(userMessage.id, { status: 'sent' });
@@ -60,7 +72,6 @@ export default function InputBox() {
       }, 1000);
     } else {
       websocketService.sendMessage(input.trim());
-      setTimeout(() => updateMessage(userMessage.id, { status: 'sent' }), 100);
     }
     
     setInput('');
@@ -98,7 +109,7 @@ export default function InputBox() {
       <div className="flex-1 relative">
         <textarea
           ref={textareaRef}
-          value={input}
+          value={input || ''}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder={t.chat.placeholder}
@@ -141,15 +152,19 @@ export default function InputBox() {
       <button
         className={cn(
           'p-2.5 rounded-lg transition-colors',
-          input.trim() && isConnected
+          input && input.trim() && isConnected
             ? 'bg-primary text-primary-foreground hover:bg-primary/90'
             : 'bg-secondary text-muted-foreground'
         )}
         onClick={handleSend}
-        disabled={!input.trim() || (!isTestMode && !isConnected)}
+        disabled={!input || !input.trim() || (!isTestMode && !isConnected)}
       >
         <Send size={20} />
       </button>
     </div>
   );
-}
+});
+
+InputBox.displayName = 'InputBox';
+
+export default InputBox;

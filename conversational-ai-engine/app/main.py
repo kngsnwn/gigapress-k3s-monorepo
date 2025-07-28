@@ -11,6 +11,7 @@ from app.core.logging import setup_logging
 from app.api.router import api_router
 from app.core.exceptions import AppException
 from app.utils.health import get_health_status
+from app.socketio_app import sio
 
 
 # Setup logging
@@ -96,11 +97,15 @@ async def health_check() -> Dict[str, Any]:
 # Include API routes
 app.include_router(api_router, prefix="/api/v1")
 
+# Create combined app with Socket.IO
+import socketio
+socket_app = socketio.ASGIApp(sio, other_asgi_app=app)
+
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
-        "app.main:app",
+        "app.main:socket_app",
         host=settings.app_host,
         port=settings.app_port,
         reload=settings.debug,

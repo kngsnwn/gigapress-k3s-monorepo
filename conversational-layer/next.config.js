@@ -2,8 +2,17 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
+  trailingSlash: false,
   images: {
     domains: ['localhost'],
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
+        destination: '/$1',
+      },
+    ]
   },
   webpack: (config) => {
     config.externals.push({

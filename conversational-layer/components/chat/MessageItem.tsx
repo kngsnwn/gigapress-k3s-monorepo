@@ -6,19 +6,22 @@ import { User, Bot, AlertCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import TypingAnimation from './TypingAnimation';
 
 interface MessageItemProps {
   message: Message;
+  enableTypingAnimation?: boolean;
 }
 
-export default function MessageItem({ message }: MessageItemProps) {
+export default function MessageItem({ message, enableTypingAnimation = false }: MessageItemProps) {
   const isUser = message.role === 'user';
   const isError = message.status === 'error';
+  const shouldAnimate = enableTypingAnimation && !isUser && message.status !== 'error';
 
   return (
     <div
       className={cn(
-        'flex gap-3 group',
+        'flex gap-3 group animate-in slide-in-from-bottom-2 duration-300',
         isUser && 'flex-row-reverse'
       )}
     >
@@ -50,30 +53,38 @@ export default function MessageItem({ message }: MessageItemProps) {
             </div>
           )}
           
-          <ReactMarkdown
-            components={{
-              code({ node, className, children, ...props }: any) {
-                const match = /language-(\w+)/.exec(className || '');
-                const isInline = !className || !match;
-                return !isInline && match ? (
-                  <SyntaxHighlighter
-                    style={vscDarkPlus}
-                    language={match[1]}
-                    PreTag="div"
-                    {...props}
-                  >
-                    {String(children).replace(/\n$/, '')}
-                  </SyntaxHighlighter>
-                ) : (
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
-                );
-              },
-            }}
-          >
-            {message.content}
-          </ReactMarkdown>
+          {shouldAnimate ? (
+            <TypingAnimation 
+              text={message.content} 
+              speed={15}
+              isUser={isUser}
+            />
+          ) : (
+            <ReactMarkdown
+              components={{
+                code({ node, className, children, ...props }: any) {
+                  const match = /language-(\w+)/.exec(className || '');
+                  const isInline = !className || !match;
+                  return !isInline && match ? (
+                    <SyntaxHighlighter
+                      style={vscDarkPlus}
+                      language={match[1]}
+                      PreTag="div"
+                      {...props}
+                    >
+                      {String(children).replace(/\n$/, '')}
+                    </SyntaxHighlighter>
+                  ) : (
+                    <code className={className} {...props}>
+                      {children}
+                    </code>
+                  );
+                },
+              }}
+            >
+              {message.content}
+            </ReactMarkdown>
+          )}
         </div>
         
         {/* Timestamp */}

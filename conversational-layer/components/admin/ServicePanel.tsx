@@ -143,11 +143,23 @@ export default function ServicePanel() {
       }, 500);
     } else {
       try {
-        const response = await fetch(`/api/services/health/${service.id}`);
-        const health = await response.json();
-        updateService(service.id, { status: health.status });
+        console.log(`Checking health for service: ${service.name}`);
+        const response = await fetch(`/api/services/health/${service.id}`, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' }
+        });
+        
+        if (response.ok) {
+          const health = await response.json();
+          console.log(`Health check result for ${service.name}:`, health);
+          updateService(service.id, { status: health.status });
+        } else {
+          console.warn(`Health check failed for ${service.name}: ${response.status}`);
+          updateService(service.id, { status: 'stopped' });
+        }
       } catch (error) {
-        updateService(service.id, { status: 'error' });
+        console.error(`Health check error for ${service.name}:`, error);
+        updateService(service.id, { status: 'stopped' });
       }
     }
   };

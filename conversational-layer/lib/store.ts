@@ -14,6 +14,7 @@ interface ConversationStore {
   setCurrentProject: (project: Project | null) => void;
   updateProject: (id: string, updates: Partial<Project>) => void;
   addProject: (project: Project) => void;
+  clearProjects: () => void;
   
   // Progress
   progressUpdates: ProgressUpdate[];
@@ -72,6 +73,7 @@ export const useConversationStore = create<ConversationStore>((set) => ({
       }
       return { projects: [...state.projects, project] };
     }),
+  clearProjects: () => set({ projects: [], currentProject: null }),
   
   // Progress
   progressUpdates: [],

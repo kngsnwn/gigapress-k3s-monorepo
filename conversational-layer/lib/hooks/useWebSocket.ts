@@ -5,7 +5,7 @@ import { websocketService } from '@/lib/websocket';
 import { useConversationStore } from '@/lib/store';
 
 export function useWebSocket(url?: string) {
-  const wsUrl = url || process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8087';
+  const wsUrl = url || process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8088';
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
   const isConnected = useConversationStore((state) => state.isConnected);
 

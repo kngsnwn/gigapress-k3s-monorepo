@@ -4,15 +4,13 @@ import { demoProjects, demoMessages, demoProgressUpdates, demoServices } from '.
 export const loadTestData = () => {
   const store = useConversationStore.getState();
   
-  // Load demo projects with delay
+  // Load demo projects immediately
   if (store.projects.length === 0) {
     demoProjects.forEach((project, index) => {
-      setTimeout(() => {
-        store.addProject(project);
-        if (index === 0) {
-          store.setCurrentProject(project);
-        }
-      }, index * 500);
+      store.addProject(project);
+      if (index === 0) {
+        store.setCurrentProject(project);
+      }
     });
   }
   

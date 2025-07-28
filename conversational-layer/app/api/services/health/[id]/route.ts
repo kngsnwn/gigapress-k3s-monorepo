@@ -27,37 +27,53 @@ export async function GET(
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const timeoutId = setTimeout(() => controller.abort(), 3000); // Reduced timeout
 
     const response = await fetch(endpoint, {
       signal: controller.signal,
-      headers: { 'Accept': 'application/json' }
+      headers: { 'Accept': 'application/json' },
+      method: 'GET'
     });
 
     clearTimeout(timeoutId);
 
     if (response.ok) {
+      let healthData;
+      try {
+        healthData = await response.json();
+      } catch {
+        healthData = { message: 'Service responding' };
+      }
+      
       return NextResponse.json({
         status: 'running',
-        health: await response.json()
+        health: healthData,
+        timestamp: new Date().toISOString()
       });
     } else {
       return NextResponse.json({
         status: 'error',
-        message: `Service responded with status ${response.status}`
+        message: `Service responded with status ${response.status}`,
+        timestamp: new Date().toISOString()
       });
     }
   } catch (error: any) {
+    console.log(`Health check failed for ${serviceId}:`, error.message);
+    
     if (error.name === 'AbortError') {
       return NextResponse.json({
         status: 'stopped',
-        message: 'Service timeout'
+        message: 'Service timeout (3s)',
+        timestamp: new Date().toISOString()
       });
     }
     
+    // Don't fail completely - just mark as stopped
     return NextResponse.json({
       status: 'stopped',
-      message: 'Service not reachable'
+      message: 'Service not reachable',
+      error: error.message,
+      timestamp: new Date().toISOString()
     });
   }
 }

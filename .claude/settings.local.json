@@ -27,7 +27,26 @@
       "Bash(docker-compose build:*)",
       "Bash(docker-compose restart:*)",
       "Bash(docker-compose down:*)",
-      "Bash(docker rmi:*)"
+      "Bash(docker rmi:*)",
+      "Bash(docker build:*)",
+      "Bash(docker restart:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker system prune:*)",
+      "Bash(docker cp:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker start:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx next dev:*)",
+      "Bash(taskkill:*)",
+      "Bash(ls:*)",
+      "Bash(.gradlew.bat bootRun)",
+      "Bash(gradle:*)",
+      "Bash(./gradlew:*)",
+      "Bash(java:*)",
+      "Bash(npm install:*)",
+      "Bash(./start-java-services.bat)",
+      "Bash(taskkill:*)",
+      "Bash(tskill:*)"
     ],
     "deny": []
   }

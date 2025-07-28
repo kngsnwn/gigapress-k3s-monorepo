@@ -29,7 +29,7 @@ export default function Home() {
   useEffect(() => {
     // Only connect to WebSocket if not in test mode and not showing mode selector
     if (!isTestMode && !showModeSelector) {
-      const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8087';
+      const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8088';
       websocketService.connect(wsUrl);
     }
 
@@ -96,10 +96,10 @@ export default function Home() {
               <main className="flex-1 overflow-hidden">
                 {userMode === 'admin' ? (
                   <div className="h-full flex">
-                    <div className="flex-1 overflow-y-auto p-6">
+                    <div className="flex-1 min-w-0 overflow-y-auto p-6 xl:flex-[2] lg:flex-[3] md:flex-[1]">
                       <ServicePanel />
                     </div>
-                    <div className="w-1/2 border-l">
+                    <div className="w-1/2 min-w-0 border-l xl:w-2/5 lg:w-1/2 md:w-1/2">
                       <ChatInterface />
                     </div>
                   </div>

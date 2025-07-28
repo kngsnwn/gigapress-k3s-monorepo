@@ -1,8 +1,10 @@
 'use client'
 
+import { useState } from 'react';
 import { useTheme } from 'next-themes';
 import { useConversationStore } from '@/lib/store';
 import { demoProjects, demoMessages, demoProgressUpdates } from '@/lib/demoData';
+import { websocketService } from '@/lib/websocket';
 import { 
   Sun, 
   Moon, 
@@ -16,14 +18,17 @@ import {
   ToggleRight,
   Baby,
   GraduationCap,
-  Shield
+  Shield,
+  Home
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/lib/i18n';
 import { LanguageSelector } from '../LanguageSelector';
+import SettingsModal from '../ui/SettingsModal';
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { 
     isConnected, 
     isDemoMode, 
@@ -34,16 +39,20 @@ export default function Header() {
     clearMessages,
     clearProgress,
     addProject,
-    userMode
+    userMode,
+    projects,
+    clearProjects
   } = useConversationStore();
   const { t } = useI18n();
 
-  const toggleMode = () => {
+  const toggleMode = async () => {
     const newMode = !isDemoMode;
     setIsDemoMode(newMode);
     
     if (newMode) {
       // Switch to demo mode
+      console.log('Switching to demo mode');
+      websocketService.disconnect();
       clearMessages();
       clearProgress();
       
@@ -54,29 +63,46 @@ export default function Header() {
       setCurrentProject(demoProjects[0]);
     } else {
       // Switch to real mode
+      console.log('Switching to real mode');
       clearMessages();
       clearProgress();
       setCurrentProject(null);
       
-      // Reconnect WebSocket
-      if (typeof window !== 'undefined') {
-        window.location.reload();
-      }
+      // Reconnect WebSocket properly
+      const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8087';
+      websocketService.reconnect(wsUrl);
+    }
+  };
+
+  const resetToHome = () => {
+    // Clear all data and reset to initial state
+    clearMessages();
+    clearProgress();
+    clearProjects();
+    
+    // If in demo mode, reload demo data
+    if (isDemoMode) {
+      // Add demo data back
+      demoProjects.forEach(project => addProject(project));
+      setCurrentProject(demoProjects[0]);
     }
   };
 
   return (
-    <header className="palantir-header justify-between">
+    <header className="palantir-header">
       {/* Logo and Title */}
-      <div className="flex items-center gap-3">
+      <button 
+        onClick={resetToHome}
+        className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+        title="홈으로 가기"
+      >
         <div className="palantir-icon-button">
           <Sparkles size={16} className="text-primary" />
         </div>
         <div>
           <h1 className="text-sm font-semibold">GigaPress</h1>
-          <p className="palantir-text-xs">AI Development Platform</p>
         </div>
-      </div>
+      </button>
 
       {/* Actions */}
       <div className="flex items-center gap-2">
@@ -138,6 +164,14 @@ export default function Header() {
 
         {/* Toolbar with actions */}
         <div className="palantir-toolbar">
+          <button
+            onClick={resetToHome}
+            className="palantir-icon-button"
+            title="홈으로 가기"
+          >
+            <Home size={14} />
+          </button>
+
           <div className="hidden sm:block">
             <LanguageSelector />
           </div>
@@ -158,6 +192,7 @@ export default function Header() {
           </button>
 
           <button
+            onClick={() => setIsSettingsOpen(true)}
             className="palantir-icon-button"
             title="Settings"
           >
@@ -165,6 +200,11 @@ export default function Header() {
           </button>
         </div>
       </div>
+
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
+      />
     </header>
   );
 }
