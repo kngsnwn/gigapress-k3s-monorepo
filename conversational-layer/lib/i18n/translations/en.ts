@@ -1,0 +1,81 @@
+import { Translations } from '../types';
+
+export const en: Translations = {
+  common: {
+    save: 'Save',
+    cancel: 'Cancel',
+    delete: 'Delete',
+    edit: 'Edit',
+    confirm: 'Confirm',
+    close: 'Close',
+    back: 'Back',
+    next: 'Next',
+    loading: 'Loading...',
+    error: 'Error',
+    success: 'Success',
+  },
+  
+  modeSelector: {
+    title: 'Mode Selection',
+    selectMode: 'Select a mode',
+    beginner: 'Beginner',
+    expert: 'Expert',
+    manager: 'Manager',
+    beginnerDesc: 'Provides basic features and guidance',
+    expertDesc: 'Provides advanced features and detailed settings',
+    managerDesc: 'Provides project management and team collaboration features',
+  },
+  
+  chat: {
+    placeholder: 'Type your message...',
+    send: 'Send',
+    typing: 'AI is typing...',
+    thinking: 'Thinking...',
+    noMessages: 'No messages',
+    startConversation: 'Start by describing the project you want to create. I can help you build web applications, mobile apps, APIs, and more using natural language.',
+    newChat: 'New Chat',
+    clearChat: 'Clear Chat',
+    testMode: 'Running in test data mode',
+    welcomeTitle: 'Welcome to GigaPress',
+    example1: '"Create a shopping mall with product catalog and reviews"',
+    example2: '"Build a task management app with team collaboration"',
+    example3: '"Generate a REST API for a blog platform"',
+  },
+  
+  project: {
+    title: 'Projects',
+    newProject: 'New Project',
+    projectName: 'Project Name',
+    description: 'Description',
+    status: 'Status',
+    active: 'Active',
+    completed: 'Completed',
+    archived: 'Archived',
+    noProjects: 'No projects',
+    createFirst: 'Create your first project',
+  },
+  
+  progress: {
+    title: 'Progress',
+    overallProgress: 'Overall Progress',
+    tasks: 'Tasks',
+    completed: 'Completed',
+    remaining: 'Remaining',
+    estimatedTime: 'Estimated Time',
+    hours: 'hours',
+    minutes: 'minutes',
+    noTasks: 'No active tasks',
+  },
+  
+  settings: {
+    title: 'Settings',
+    language: 'Language',
+    theme: 'Theme',
+    light: 'Light',
+    dark: 'Dark',
+    system: 'System',
+    notifications: 'Notifications',
+    enabled: 'Enabled',
+    disabled: 'Disabled',
+  },
+};

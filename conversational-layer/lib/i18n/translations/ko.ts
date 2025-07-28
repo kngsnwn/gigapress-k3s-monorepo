@@ -1,0 +1,81 @@
+import { Translations } from '../types';
+
+export const ko: Translations = {
+  common: {
+    save: '저장',
+    cancel: '취소',
+    delete: '삭제',
+    edit: '수정',
+    confirm: '확인',
+    close: '닫기',
+    back: '뒤로',
+    next: '다음',
+    loading: '로딩중...',
+    error: '오류',
+    success: '성공',
+  },
+  
+  modeSelector: {
+    title: '모드 선택',
+    selectMode: '모드를 선택하세요',
+    beginner: '초보자',
+    expert: '전문가',
+    manager: '관리자',
+    beginnerDesc: '기본적인 기능과 안내를 제공합니다',
+    expertDesc: '고급 기능과 상세한 설정을 제공합니다',
+    managerDesc: '프로젝트 관리와 팀 협업 기능을 제공합니다',
+  },
+  
+  chat: {
+    placeholder: '메시지를 입력하세요...',
+    send: '전송',
+    typing: 'AI가 입력중...',
+    thinking: '생각중...',
+    noMessages: '메시지가 없습니다',
+    startConversation: '프로젝트에 대해 설명해주시면 웹 애플리케이션, 모바일 앱, API 등을 자연어로 도와드릴 수 있습니다.',
+    newChat: '새 대화',
+    clearChat: '대화 내용 삭제',
+    testMode: '테스트 데이터 모드로 실행 중입니다',
+    welcomeTitle: 'GigaPress에 오신 것을 환영합니다',
+    example1: '"상품 카탈로그와 리뷰가 있는 쇼핑몰 만들어줘"',
+    example2: '"팀 협업 기능이 있는 작업 관리 앱 개발해줘"',
+    example3: '"블로그 플랫폼용 REST API 생성해줘"',
+  },
+  
+  project: {
+    title: '프로젝트',
+    newProject: '새 프로젝트',
+    projectName: '프로젝트명',
+    description: '설명',
+    status: '상태',
+    active: '진행중',
+    completed: '완료',
+    archived: '보관됨',
+    noProjects: '프로젝트가 없습니다',
+    createFirst: '첫 번째 프로젝트를 만들어보세요',
+  },
+  
+  progress: {
+    title: '진행 상황',
+    overallProgress: '전체 진행률',
+    tasks: '작업',
+    completed: '완료됨',
+    remaining: '남음',
+    estimatedTime: '예상 시간',
+    hours: '시간',
+    minutes: '분',
+    noTasks: '진행중인 작업이 없습니다',
+  },
+  
+  settings: {
+    title: '설정',
+    language: '언어',
+    theme: '테마',
+    light: '라이트',
+    dark: '다크',
+    system: '시스템',
+    notifications: '알림',
+    enabled: '활성화',
+    disabled: '비활성화',
+  },
+};
