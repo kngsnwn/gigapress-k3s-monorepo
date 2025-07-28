@@ -11,7 +11,7 @@ class WebSocketService {
   private isManuallyDisconnected = false;
   private reconnectTimer: NodeJS.Timeout | null = null;
 
-  connect(url: string = 'http://localhost:8088') {
+  connect(url: string = 'http://localhost:8087') {
     // If already connected to the same URL, don't reconnect
     if (this.socket?.connected && this.socket.io.uri === url) {
       return;
