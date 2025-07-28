@@ -1,5 +1,5 @@
 from typing import Dict, Any
-import aioredis
+import redis.asyncio as redis
 import httpx
 from datetime import datetime
 from config.settings import settings
@@ -11,13 +11,13 @@ logger = logging.getLogger(__name__)
 async def check_redis_health() -> Dict[str, Any]:
     """Check Redis connection health"""
     try:
-        redis = await aioredis.from_url(
+        redis_client = redis.from_url(
             f"redis://{settings.redis_host}:{settings.redis_port}",
             password=settings.redis_password,
             decode_responses=True
         )
-        await redis.ping()
-        await redis.close()
+        await redis_client.ping()
+        await redis_client.close()
         return {"status": "healthy", "message": "Redis connection successful"}
     except Exception as e:
         logger.error(f"Redis health check failed: {str(e)}")

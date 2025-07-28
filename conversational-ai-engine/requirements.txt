@@ -45,6 +45,6 @@ mypy==1.7.1
 fastapi-pagination==0.12.13
 
 # Additional for Step 2
-aioredis==2.0.1
+# aioredis==2.0.1  # Removed - conflicts with redis package
 starlette==0.27.0
-uuid==1.30
+# uuid==1.30  # Built-in module, not needed

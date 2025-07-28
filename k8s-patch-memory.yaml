@@ -1,0 +1,50 @@
+# Kafka 메모리 패치
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+  namespace: gigapress
+spec:
+  template:
+    spec:
+      containers:
+      - name: kafka
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+        env:
+        - name: KAFKA_HEAP_OPTS
+          value: "-Xmx512M -Xms512M"
+        - name: KAFKA_JVM_PERFORMANCE_OPTS
+          value: "-XX:+UseG1GC -XX:MaxGCPauseMillis=20"
+
+---
+# Neo4j 메모리 패치
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: neo4j
+  namespace: gigapress
+spec:
+  template:
+    spec:
+      containers:
+      - name: neo4j
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+        env:
+        - name: NEO4J_dbms_memory_pagecache_size
+          value: "256M"
+        - name: NEO4J_dbms_memory_heap_max__size
+          value: "256M"
+        - name: NEO4J_dbms_memory_heap_initial__size
+          value: "256M"
