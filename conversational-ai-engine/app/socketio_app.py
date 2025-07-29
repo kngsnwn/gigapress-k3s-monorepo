@@ -125,9 +125,17 @@ async def message(sid, data):
         }
         
         await sio.emit('message', response_data, room=sid)
+        logger.info(f"Sent AI response to {sid}: {ai_response[:100]}...")
     else:
-        # Legacy message handling
-        await sio.emit('response', {'echo': data, 'from': 'server'}, room=sid)
+        # Handle other message types or malformed messages
+        logger.warning(f"Received unexpected message format from {sid}: {data}")
+        error_response = {
+            'type': 'error',
+            'payload': {
+                'message': 'Invalid message format. Please use the chat interface.'
+            }
+        }
+        await sio.emit('message', error_response, room=sid)
 
 @sio.event
 async def chat(sid, data):

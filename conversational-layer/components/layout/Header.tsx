@@ -19,14 +19,19 @@ import {
   Baby,
   GraduationCap,
   Shield,
-  Home
+  Home,
+  Menu
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/lib/i18n';
 import { LanguageSelector } from '../LanguageSelector';
 import SettingsModal from '../ui/SettingsModal';
 
-export default function Header() {
+interface HeaderProps {
+  onMenuClick: () => void;
+}
+
+export default function Header({ onMenuClick }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { 
@@ -90,6 +95,15 @@ export default function Header() {
 
   return (
     <header className="palantir-header">
+      {/* Menu Button */}
+      <button
+        onClick={onMenuClick}
+        className="palantir-icon-button mr-2"
+        title="프로젝트 메뉴"
+      >
+        <Menu size={16} />
+      </button>
+
       {/* Logo and Title */}
       <button 
         onClick={resetToHome}

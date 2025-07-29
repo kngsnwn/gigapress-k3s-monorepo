@@ -15,9 +15,6 @@ services:
       - ./.env:/app/.env
     networks:
       - gigapress-network
-    depends_on:
-      - redis
-      - kafka
     restart: unless-stopped
 
 networks:

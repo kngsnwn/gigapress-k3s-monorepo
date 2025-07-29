@@ -2,11 +2,14 @@ import { create } from 'zustand';
 import { Message, Project, ProgressUpdate, UserMode, Service } from '@/types';
 
 interface ConversationStore {
-  // Messages
+  // Messages - now project-specific
+  projectMessages: Record<string, Message[]>;
   messages: Message[];
-  addMessage: (message: Message) => void;
-  updateMessage: (id: string, updates: Partial<Message>) => void;
-  clearMessages: () => void;
+  addMessage: (message: Message, projectId?: string) => void;
+  updateMessage: (id: string, updates: Partial<Message>, projectId?: string) => void;
+  clearMessages: (projectId?: string) => void;
+  getMessagesForProject: (projectId: string) => Message[];
+  setCurrentProjectMessages: (projectId: string | null) => void;
   
   // Projects
   currentProject: Project | null;
@@ -27,11 +30,20 @@ interface ConversationStore {
   isDemoMode: boolean;
   isTestMode: boolean;
   userMode: UserMode;
+  connectionStatus: 'connected' | 'connecting' | 'disconnected' | 'error';
+  lastError: string | null;
+  pendingMessageId: string | null;
+  retryCount: number;
   setIsConnected: (connected: boolean) => void;
   setIsTyping: (typing: boolean) => void;
   setIsDemoMode: (demo: boolean) => void;
   setIsTestMode: (testMode: boolean) => void;
   setUserMode: (mode: UserMode) => void;
+  setConnectionStatus: (status: 'connected' | 'connecting' | 'disconnected' | 'error') => void;
+  setLastError: (error: string | null) => void;
+  setPendingMessageId: (id: string | null) => void;
+  incrementRetryCount: () => void;
+  resetRetryCount: () => void;
   
   // Services
   services: Service[];
@@ -39,18 +51,96 @@ interface ConversationStore {
   updateService: (id: string, updates: Partial<Service>) => void;
 }
 
-export const useConversationStore = create<ConversationStore>((set) => ({
-  // Messages
+export const useConversationStore = create<ConversationStore>((set, get) => ({
+  // Messages - now project-specific
+  projectMessages: {},
   messages: [],
-  addMessage: (message) =>
-    set((state) => ({ messages: [...state.messages, message] })),
-  updateMessage: (id, updates) =>
+  addMessage: (message, projectId) => {
+    const currentProjectId = projectId || get().currentProject?.id;
+    if (!currentProjectId) {
+      set((state) => ({ messages: [...state.messages, message] }));
+      return;
+    }
+    
+    set((state) => {
+      const updatedProjectMessages = { ...state.projectMessages };
+      if (!updatedProjectMessages[currentProjectId]) {
+        updatedProjectMessages[currentProjectId] = [];
+      }
+      updatedProjectMessages[currentProjectId] = [...updatedProjectMessages[currentProjectId], message];
+      
+      // Update current messages if this is the active project
+      const messages = state.currentProject?.id === currentProjectId 
+        ? updatedProjectMessages[currentProjectId] 
+        : state.messages;
+      
+      return { 
+        projectMessages: updatedProjectMessages,
+        messages 
+      };
+    });
+  },
+  updateMessage: (id, updates, projectId) => {
+    const currentProjectId = projectId || get().currentProject?.id;
+    if (!currentProjectId) {
+      set((state) => ({
+        messages: state.messages.map((msg) =>
+          msg.id === id ? { ...msg, ...updates } : msg
+        ),
+      }));
+      return;
+    }
+    
+    set((state) => {
+      const updatedProjectMessages = { ...state.projectMessages };
+      if (updatedProjectMessages[currentProjectId]) {
+        updatedProjectMessages[currentProjectId] = updatedProjectMessages[currentProjectId].map((msg) =>
+          msg.id === id ? { ...msg, ...updates } : msg
+        );
+      }
+      
+      // Update current messages if this is the active project
+      const messages = state.currentProject?.id === currentProjectId 
+        ? updatedProjectMessages[currentProjectId] || []
+        : state.messages;
+      
+      return { 
+        projectMessages: updatedProjectMessages,
+        messages 
+      };
+    });
+  },
+  clearMessages: (projectId) => {
+    const currentProjectId = projectId || get().currentProject?.id;
+    if (!currentProjectId) {
+      set({ messages: [] });
+      return;
+    }
+    
+    set((state) => {
+      const updatedProjectMessages = { ...state.projectMessages };
+      updatedProjectMessages[currentProjectId] = [];
+      
+      // Update current messages if this is the active project
+      const messages = state.currentProject?.id === currentProjectId 
+        ? []
+        : state.messages;
+      
+      return { 
+        projectMessages: updatedProjectMessages,
+        messages 
+      };
+    });
+  },
+  getMessagesForProject: (projectId) => {
+    const state = get();
+    return state.projectMessages[projectId] || [];
+  },
+  setCurrentProjectMessages: (projectId) => {
     set((state) => ({
-      messages: state.messages.map((msg) =>
-        msg.id === id ? { ...msg, ...updates } : msg
-      ),
-    })),
-  clearMessages: () => set({ messages: [] }),
+      messages: projectId ? (state.projectMessages[projectId] || []) : []
+    }));
+  },
   
   // Projects
   currentProject: null,
@@ -86,14 +176,23 @@ export const useConversationStore = create<ConversationStore>((set) => ({
   // UI State
   isConnected: false,
   isTyping: false,
-  isDemoMode: true,
-  isTestMode: true,
+  isDemoMode: false,
+  isTestMode: false,
   userMode: 'beginner' as UserMode,
+  connectionStatus: 'disconnected',
+  lastError: null,
+  pendingMessageId: null,
+  retryCount: 0,
   setIsConnected: (connected) => set({ isConnected: connected }),
   setIsTyping: (typing) => set({ isTyping: typing }),
   setIsDemoMode: (demo) => set({ isDemoMode: demo }),
   setIsTestMode: (testMode) => set({ isTestMode: testMode }),
   setUserMode: (mode) => set({ userMode: mode }),
+  setConnectionStatus: (status) => set({ connectionStatus: status }),
+  setLastError: (error) => set({ lastError: error }),
+  setPendingMessageId: (id) => set({ pendingMessageId: id }),
+  incrementRetryCount: () => set((state) => ({ retryCount: state.retryCount + 1 })),
+  resetRetryCount: () => set({ retryCount: 0 }),
   
   // Services
   services: [],

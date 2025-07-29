@@ -1,0 +1,117 @@
+{
+  "startTime": "2025-07-29T20:57:05.226Z",
+  "endTime": "2025-07-29T21:00:00.435Z",
+  "totalTests": 10,
+  "passedTests": 10,
+  "failedTests": 0,
+  "connectionStatus": "connected",
+  "conversations": [
+    {
+      "testId": "test-001",
+      "description": "Korean greeting test",
+      "userMessage": "안녕하세요",
+      "aiResponse": "안녕하세요! '안녕하세요' 요청을 이해했습니다. 더 구체적인 요구사항을 알려주시면 더 나은 도움을 드릴 수 있습니다.",
+      "responseTime": 1,
+      "timestamp": "2025-07-29T20:57:05.262Z",
+      "success": true,
+      "keywordMatch": 1
+    },
+    {
+      "testId": "test-002",
+      "description": "Shopping mall development request",
+      "userMessage": "쇼핑몰 개발해주세요",
+      "aiResponse": "쇼핑몰 개발 요청을 받았습니다! \n\n요청하신 기능: 기본 쇼핑몰 기능\n\n개발 계획:\n1. 🛍️ 상품 카탈로그 시스템\n   - 상품 목록 및 상세 페이지\n   - 카테고리 분류\n   - 검색 기능\n\n2. ⭐ 리뷰 시스템\n   - 별점 평가\n   - 리뷰 작성/수정/삭제\n   - 리뷰 필터링\n\n3. 🛒 쇼핑 기능\n   - 장바구니\n   - 주문 관리\n   - 결제 연동\n\n4. 👤 사용자 관리\n   - 회원 가입/로그인\n   - 주문 내역\n   - 개인정보 관리\n\n기술 스택: React, Node.js, MongoDB\n예상 개발 기간: 2-3주\n\n프로젝트를 시작하시겠습니까?",
+      "responseTime": 2,
+      "timestamp": "2025-07-29T20:57:22.287Z",
+      "success": true,
+      "keywordMatch": 4
+    },
+    {
+      "testId": "test-003",
+      "description": "React component creation request",
+      "userMessage": "React 컴포넌트 만들어주세요",
+      "aiResponse": "안녕하세요! 'React 컴포넌트 만들어주세요' 요청을 이해했습니다. 더 구체적인 요구사항을 알려주시면 더 나은 도움을 드릴 수 있습니다.",
+      "responseTime": 1,
+      "timestamp": "2025-07-29T20:57:39.296Z",
+      "success": true,
+      "keywordMatch": 2
+    },
+    {
+      "testId": "test-004",
+      "description": "New project creation request",
+      "userMessage": "새 프로젝트 만들어주세요",
+      "aiResponse": "안녕하세요! '새 프로젝트 만들어주세요' 요청을 이해했습니다. 더 구체적인 요구사항을 알려주시면 더 나은 도움을 드릴 수 있습니다.",
+      "responseTime": 1,
+      "timestamp": "2025-07-29T20:57:56.300Z",
+      "success": true,
+      "keywordMatch": 3
+    },
+    {
+      "testId": "test-005",
+      "description": "Project status inquiry",
+      "userMessage": "현재 프로젝트 상태는?",
+      "aiResponse": "안녕하세요! '현재 프로젝트 상태는?' 요청을 이해했습니다. 더 구체적인 요구사항을 알려주시면 더 나은 도움을 드릴 수 있습니다.",
+      "responseTime": 1,
+      "timestamp": "2025-07-29T20:58:13.315Z",
+      "success": true,
+      "keywordMatch": 3
+    },
+    {
+      "testId": "test-006",
+      "description": "Authentication system request",
+      "userMessage": "로그인 시스템 구현해주세요",
+      "aiResponse": "안녕하세요! '로그인 시스템 구현해주세요' 요청을 이해했습니다. 더 구체적인 요구사항을 알려주시면 더 나은 도움을 드릴 수 있습니다.",
+      "responseTime": 2,
+      "timestamp": "2025-07-29T20:58:30.329Z",
+      "success": true,
+      "keywordMatch": 3
+    },
+    {
+      "testId": "test-007",
+      "description": "API server development request",
+      "userMessage": "API 서버 개발이 필요합니다",
+      "aiResponse": "안녕하세요! 'API 서버 개발이 필요합니다' 요청을 이해했습니다. 더 구체적인 요구사항을 알려주시면 더 나은 도움을 드릴 수 있습니다.",
+      "responseTime": 2,
+      "timestamp": "2025-07-29T20:58:47.345Z",
+      "success": true,
+      "keywordMatch": 3
+    },
+    {
+      "testId": "test-008",
+      "description": "Database design assistance",
+      "userMessage": "데이터베이스 설계 도움을 주세요",
+      "aiResponse": "안녕하세요! '데이터베이스 설계 도움을 주세요' 요청을 이해했습니다. 더 구체적인 요구사항을 알려주시면 더 나은 도움을 드릴 수 있습니다.",
+      "responseTime": 2,
+      "timestamp": "2025-07-29T20:59:04.364Z",
+      "success": true,
+      "keywordMatch": 3
+    },
+    {
+      "testId": "test-009",
+      "description": "Mobile app development planning",
+      "userMessage": "모바일 앱 개발 계획",
+      "aiResponse": "안녕하세요! '모바일 앱 개발 계획' 요청을 이해했습니다. 더 구체적인 요구사항을 알려주시면 더 나은 도움을 드릴 수 있습니다.",
+      "responseTime": 2,
+      "timestamp": "2025-07-29T20:59:21.379Z",
+      "success": true,
+      "keywordMatch": 4
+    },
+    {
+      "testId": "test-010",
+      "description": "Test completion inquiry",
+      "userMessage": "테스트 완료되었나요?",
+      "aiResponse": "안녕하세요! '테스트 완료되었나요?' 요청을 이해했습니다. 더 구체적인 요구사항을 알려주시면 더 나은 도움을 드릴 수 있습니다.",
+      "responseTime": 2,
+      "timestamp": "2025-07-29T20:59:38.401Z",
+      "success": true,
+      "keywordMatch": 2
+    }
+  ],
+  "errors": [],
+  "responseMetrics": {
+    "averageResponseTime": 1.7777777777777777,
+    "minResponseTime": 1,
+    "maxResponseTime": 2,
+    "totalResponseTime": 16
+  }
+}

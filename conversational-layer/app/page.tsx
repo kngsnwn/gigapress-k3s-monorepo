@@ -25,11 +25,12 @@ export default function Home() {
   const userMode = useConversationStore((state) => state.userMode);
   const [showDataModeSelector, setShowDataModeSelector] = useState(true);
   const [showModeSelector, setShowModeSelector] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     // Only connect to WebSocket if not in test mode and not showing mode selector
     if (!isTestMode && !showModeSelector) {
-      const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8088';
+      const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8087';
       websocketService.connect(wsUrl);
     }
 
@@ -88,11 +89,11 @@ export default function Home() {
         {!isMobile && (
           <>
             {/* Sidebar */}
-            <ProjectSidebar />
+            <ProjectSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
             
             {/* Main Content */}
             <div className="flex-1 flex flex-col">
-              <Header />
+              <Header onMenuClick={() => setIsSidebarOpen(true)} />
               <main className="flex-1 overflow-hidden">
                 {userMode === 'admin' ? (
                   <div className="h-full flex">
@@ -113,12 +114,15 @@ export default function Home() {
 
         {/* Mobile Layout */}
         {isMobile && (
-          <div className="flex flex-col h-full">
-            <Header />
-            <main className="flex-1 overflow-hidden">
-              <ChatInterfaceMobile />
-            </main>
-          </div>
+          <>
+            <ProjectSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+            <div className="flex flex-col h-full">
+              <Header onMenuClick={() => setIsSidebarOpen(true)} />
+              <main className="flex-1 overflow-hidden">
+                <ChatInterfaceMobile />
+              </main>
+            </div>
+          </>
         )}
       </motion.div>
     </I18nProvider>

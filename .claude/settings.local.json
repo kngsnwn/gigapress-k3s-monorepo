@@ -46,7 +46,9 @@
       "Bash(npm install:*)",
       "Bash(./start-java-services.bat)",
       "Bash(taskkill:*)",
-      "Bash(tskill:*)"
+      "Bash(tskill:*)",
+      "Bash(findstr:*)",
+      "Bash(node:*)"
     ],
     "deny": []
   }

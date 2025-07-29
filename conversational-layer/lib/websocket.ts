@@ -52,6 +52,9 @@ class WebSocketService {
     this.socket.on('connect', () => {
       console.log('WebSocket connected');
       store.setIsConnected(true);
+      store.setConnectionStatus('connected');
+      store.setLastError(null);
+      store.resetRetryCount();
       this.reconnectAttempts = 0;
       toast.success('Connected to server');
     });
@@ -59,6 +62,7 @@ class WebSocketService {
     this.socket.on('disconnect', (reason) => {
       console.log('WebSocket disconnected:', reason);
       store.setIsConnected(false);
+      store.setConnectionStatus('disconnected');
       
       if (!this.isManuallyDisconnected) {
         toast.error('Disconnected from server');
@@ -69,6 +73,8 @@ class WebSocketService {
     this.socket.on('connect_error', (error) => {
       console.error('WebSocket connection error:', error);
       store.setIsConnected(false);
+      store.setConnectionStatus('error');
+      store.setLastError(error.message || 'Connection failed');
       
       if (!this.isManuallyDisconnected) {
         this.attemptReconnect();
@@ -87,15 +93,22 @@ class WebSocketService {
   }
 
   private attemptReconnect() {
+    const store = useConversationStore.getState();
+    
     if (this.isManuallyDisconnected || this.reconnectAttempts >= this.maxReconnectAttempts) {
       if (this.reconnectAttempts >= this.maxReconnectAttempts) {
         console.log('Max reconnection attempts reached');
+        store.setConnectionStatus('error');
+        store.setLastError('Max reconnection attempts reached');
         toast.error('Unable to connect to server. Please try switching to demo mode or check your connection.');
       }
       return;
     }
 
     this.reconnectAttempts++;
+    store.setConnectionStatus('connecting');
+    store.incrementRetryCount();
+    
     const delay = Math.min(this.reconnectDelay * this.reconnectAttempts, 10000);
     
     console.log(`Reconnection attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${delay}ms`);
@@ -147,8 +160,12 @@ class WebSocketService {
   }
 
   sendMessage(content: string) {
+    const store = useConversationStore.getState();
+    
     if (!this.socket?.connected) {
       toast.error('Not connected to server');
+      // Add mock response for testing when not connected
+      this.addMockResponse(content);
       return;
     }
 
@@ -160,21 +177,71 @@ class WebSocketService {
       status: 'sending',
     };
 
-    const store = useConversationStore.getState();
     store.addMessage(message);
+    store.setPendingMessageId(message.id);
 
-    this.socket.emit('message', {
-      type: 'user_message',
-      payload: {
-        content,
-        projectId: store.currentProject?.id,
-      },
-    });
+    try {
+      this.socket.emit('message', {
+        type: 'user_message',
+        payload: {
+          content,
+          projectId: store.currentProject?.id,
+        },
+      });
 
-    // Update message status
+      // Update message status after successful emit
+      setTimeout(() => {
+        store.updateMessage(message.id, { status: 'sent' });
+        store.setPendingMessageId(null);
+      }, 100);
+      
+      // Add timeout for response - if no response in 10 seconds, show mock
+      setTimeout(() => {
+        const currentStore = useConversationStore.getState();
+        const lastMessage = currentStore.messages[currentStore.messages.length - 1];
+        if (lastMessage && lastMessage.role === 'user' && lastMessage.content === content) {
+          console.log('No response received, adding mock response');
+          this.addMockResponse(content);
+        }
+      }, 10000);
+      
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      store.updateMessage(message.id, { status: 'error' });
+      store.setPendingMessageId(null);
+      toast.error('Failed to send message');
+      this.addMockResponse(content);
+    }
+  }
+
+  private addMockResponse(userContent: string) {
+    const store = useConversationStore.getState();
+    
+    // Generate mock AI response
+    let mockResponse = "죄송합니다. 현재 서버에 연결할 수 없어 Mock 응답을 표시합니다. ";
+    
+    if (userContent.includes("안녕") || userContent.includes("hello")) {
+      mockResponse += "안녕하세요! 무엇을 도와드릴까요?";
+    } else if (userContent.includes("쇼핑몰")) {
+      mockResponse += "쇼핑몰 개발에 대해 문의해주셨네요. React와 Node.js를 사용한 쇼핑몰 개발을 도와드릴 수 있습니다.";
+    } else {
+      mockResponse += `"${userContent}"에 대한 답변을 준비하고 있습니다. 서버 연결을 확인해주세요.`;
+    }
+
+    const mockMessage: Message = {
+      id: `mock-${Date.now()}`,
+      role: 'assistant',
+      content: mockResponse,
+      timestamp: new Date(),
+      status: 'sent',
+    };
+
+    // Simulate typing delay
+    store.setIsTyping(true);
     setTimeout(() => {
-      store.updateMessage(message.id, { status: 'sent' });
-    }, 100);
+      store.setIsTyping(false);
+      store.addMessage(mockMessage);
+    }, 1500);
   }
 
   sendProjectAction(action: string, payload: any) {
@@ -207,6 +274,8 @@ class WebSocketService {
       
       const store = useConversationStore.getState();
       store.setIsConnected(false);
+      store.setConnectionStatus('disconnected');
+      store.setPendingMessageId(null);
     }
   }
 

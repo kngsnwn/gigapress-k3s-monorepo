@@ -1,0 +1,17 @@
+{
+  "name": "gigapress-test-suite",
+  "version": "1.0.0",
+  "description": "Automated test suite for GigaPress WebSocket communication",
+  "main": "test-websocket-automation.js",
+  "scripts": {
+    "test": "node test-websocket-automation.js",
+    "test-websocket": "node test-websocket-automation.js"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.2"
+  },
+  "devDependencies": {},
+  "keywords": ["websocket", "testing", "automation", "gigapress"],
+  "author": "GigaPress Team",
+  "license": "MIT"
+}

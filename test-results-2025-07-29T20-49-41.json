@@ -1,0 +1,27 @@
+{
+  "startTime": "2025-07-29T20:49:41.260Z",
+  "endTime": null,
+  "totalTests": 10,
+  "passedTests": 0,
+  "failedTests": 0,
+  "connectionStatus": "error",
+  "conversations": [],
+  "errors": [
+    {
+      "type": "connection_error",
+      "message": "xhr poll error",
+      "timestamp": "2025-07-29T20:49:41.293Z"
+    },
+    {
+      "type": "execution_error",
+      "message": "xhr poll error",
+      "timestamp": "2025-07-29T20:49:41.293Z"
+    }
+  ],
+  "responseMetrics": {
+    "averageResponseTime": 0,
+    "minResponseTime": null,
+    "maxResponseTime": 0,
+    "totalResponseTime": 0
+  }
+}

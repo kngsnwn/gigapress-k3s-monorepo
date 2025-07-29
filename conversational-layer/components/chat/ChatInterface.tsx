@@ -5,6 +5,8 @@ import { useConversationStore } from '@/lib/store';
 import MessageList from './MessageList';
 import InputBox from './InputBox';
 import ProgressTracker from '../project/ProgressTracker';
+import ConnectionStatus from './ConnectionStatus';
+import RetryButton from './RetryButton';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/lib/i18n';
 
@@ -13,7 +15,7 @@ export interface InputBoxRef {
 }
 
 export default function ChatInterface() {
-  const { isTyping, progressUpdates, isTestMode } = useConversationStore();
+  const { isTyping, progressUpdates, isTestMode, connectionStatus } = useConversationStore();
   const { t } = useI18n();
   const inputBoxRef = useRef<InputBoxRef>(null);
 
@@ -25,12 +27,20 @@ export default function ChatInterface() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Test Mode Indicator */}
-      {isTestMode && (
-        <div className="palantir-badge mx-4 mt-2 text-center">
-          Test Mode Active - {t.chat.testMode}
+      {/* Header with Connection Status */}
+      <div className="flex justify-between items-center px-4 py-2 border-b">
+        <div className="flex items-center gap-2">
+          {isTestMode && (
+            <div className="palantir-badge text-center">
+              Test Mode Active - {t.chat.testMode}
+            </div>
+          )}
         </div>
-      )}
+        <div className="flex items-center gap-2">
+          <RetryButton />
+          <ConnectionStatus />
+        </div>
+      </div>
       
       {/* Progress Tracker */}
       {progressUpdates.length > 0 && (
