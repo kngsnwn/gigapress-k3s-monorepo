@@ -106,6 +106,9 @@ class EventDrivenConversationService:
             
             # Create project (actual implementation would call MCP)
             from app.services.mcp_integration import mcp_integration_service
+            
+            # Domain schema service removed - skipping domain analysis
+            
             result = await mcp_integration_service.create_project(
                 session_id,
                 requirements

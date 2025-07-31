@@ -16,6 +16,7 @@ import { fadeIn } from '@/lib/animations';
 import { useConversationStore } from '@/lib/store';
 import { loadTestData } from '@/lib/testDataLoader';
 import { I18nProvider } from '@/lib/i18n';
+import ClientOnly from '@/components/ClientOnly';
 
 export default function Home() {
   const isMobile = useIsMobile();
@@ -50,41 +51,48 @@ export default function Home() {
   // Show data mode selector first
   if (showDataModeSelector) {
     return (
-      <I18nProvider>
-        <DataModeSelector onClose={() => {
-          setShowDataModeSelector(false);
-          setShowModeSelector(true);
-        }} />
-      </I18nProvider>
+      <ClientOnly>
+        <I18nProvider>
+          <DataModeSelector onClose={() => {
+            setShowDataModeSelector(false);
+            setShowModeSelector(true);
+          }} />
+        </I18nProvider>
+      </ClientOnly>
     );
   }
 
   // Show mode selector second
   if (showModeSelector) {
     return (
-      <I18nProvider>
-        <ModeSelector onClose={() => setShowModeSelector(false)} />
-      </I18nProvider>
+      <ClientOnly>
+        <I18nProvider>
+          <ModeSelector onClose={() => setShowModeSelector(false)} />
+        </I18nProvider>
+      </ClientOnly>
     );
   }
 
   // Show loading screen while connecting (only in real mode)
   if (!isTestMode && !isConnected && !isMobile && !showDataModeSelector && !showModeSelector) {
     return (
-      <I18nProvider>
-        <div className="flex h-screen items-center justify-center">
-          <Loading size="lg" text="Connecting to GigaPress..." />
-        </div>
-      </I18nProvider>
+      <ClientOnly>
+        <I18nProvider>
+          <div className="flex h-screen items-center justify-center">
+            <Loading size="lg" text="Connecting to GigaPress..." />
+          </div>
+        </I18nProvider>
+      </ClientOnly>
     );
   }
 
   return (
-    <I18nProvider>
-      <motion.div
-        {...fadeIn}
-        className="flex h-screen bg-background"
-      >
+    <ClientOnly>
+      <I18nProvider>
+        <motion.div
+          {...fadeIn}
+          className="flex h-screen bg-background"
+        >
         {/* Desktop Layout */}
         {!isMobile && (
           <>
@@ -126,5 +134,6 @@ export default function Home() {
         )}
       </motion.div>
     </I18nProvider>
+    </ClientOnly>
   );
 }

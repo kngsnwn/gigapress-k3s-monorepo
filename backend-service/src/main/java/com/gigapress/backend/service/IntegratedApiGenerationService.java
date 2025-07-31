@@ -1,6 +1,5 @@
 package com.gigapress.backend.service;
 
-import com.gigapress.backend.client.DomainSchemaServiceClient;
 import com.gigapress.backend.client.McpServerClient;
 import com.gigapress.backend.dto.ApiSpecification;
 import com.gigapress.backend.dto.GeneratedApi;
@@ -17,17 +16,15 @@ public class IntegratedApiGenerationService {
 
     private final ApiGenerationService apiGenerationService;
     private final BusinessLogicGenerationService businessLogicGenerationService;
-    private final DomainSchemaServiceClient domainSchemaClient;
     private final McpServerClient mcpServerClient;
     private final KafkaProducerService kafkaProducerService;
+    
 
     public GeneratedApi generateApiWithIntegration(ApiSpecification specification) {
         log.info("Starting integrated API generation for: {}", specification.getApiName());
         
         try {
-            // Step 1: Get entity definition from Domain Schema Service
-            Map<String, Object> entityDef = domainSchemaClient.getEntityDefinition(specification.getEntityName());
-            enrichSpecificationWithDomainInfo(specification, entityDef);
+            // Step 1: Skip domain schema enrichment (service removed)
             
             // Step 2: Validate structure with MCP Server
             Map<String, Object> validationResult = mcpServerClient.validateProjectStructure(
@@ -54,19 +51,6 @@ public class IntegratedApiGenerationService {
         }
     }
 
-    private void enrichSpecificationWithDomainInfo(ApiSpecification spec, Map<String, Object> entityDef) {
-        // Enrich specification with domain information
-        if (entityDef.containsKey("fields")) {
-            // Add or update fields based on domain definition
-            log.info("Enriching specification with {} fields from domain", 
-                ((java.util.List<?>) entityDef.get("fields")).size());
-        }
-        
-        if (entityDef.containsKey("relationships")) {
-            // Add relationship information
-            log.info("Adding relationship information from domain");
-        }
-    }
 
     private void sendIntegrationEvent(ApiSpecification spec, GeneratedApi api) {
         Map<String, Object> event = Map.of(
@@ -74,10 +58,11 @@ public class IntegratedApiGenerationService {
             "apiName", spec.getApiName(),
             "entityName", spec.getEntityName(),
             "timestamp", System.currentTimeMillis(),
-            "integratedServices", java.util.List.of("domain-schema", "mcp-server")
+            "integratedServices", java.util.List.of("mcp-server")
         );
         
         kafkaProducerService.sendApiGeneratedEvent(api);
         log.info("Integration event sent to Kafka");
     }
+    
 }

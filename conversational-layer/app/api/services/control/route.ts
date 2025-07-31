@@ -14,10 +14,6 @@ const serviceScripts: Record<string, { start: string; stop: string }> = {
     start: 'cd ../mcp-server && ./gradlew bootRun',
     stop: 'pkill -f "mcp-server"'
   },
-  'domain-schema-service': {
-    start: 'cd ../domain-schema-service && ./gradlew bootRun',
-    stop: 'pkill -f "domain-schema-service"'
-  },
   'backend-service': {
     start: 'cd ../backend-service && ./gradlew bootRun',
     stop: 'pkill -f "backend-service"'

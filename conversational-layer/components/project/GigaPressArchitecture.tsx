@@ -72,15 +72,6 @@ export default function GigaPressArchitecture({ activeFlow }: GigaPressArchitect
       color: 'text-cyan-500',
       type: 'core'
     },
-    {
-      id: 'domain-schema',
-      name: 'Domain Schema',
-      description: 'Schema generation service',
-      icon: Database,
-      position: { x: 50, y: 50 },
-      color: 'text-green-500',
-      type: 'core'
-    },
     
     // Generator Layer
     {
@@ -136,9 +127,8 @@ export default function GigaPressArchitecture({ activeFlow }: GigaPressArchitect
     // Main flow
     { from: 'user-input', to: 'ai-engine', type: 'data' },
     { from: 'ai-engine', to: 'mcp-server', type: 'data' },
-    { from: 'mcp-server', to: 'domain-schema', type: 'data' },
-    { from: 'domain-schema', to: 'backend', type: 'data' },
-    { from: 'domain-schema', to: 'frontend', type: 'data' },
+    { from: 'mcp-server', to: 'backend', type: 'data' },
+    { from: 'mcp-server', to: 'frontend', type: 'data' },
     { from: 'backend', to: 'dynamic-update', type: 'data' },
     { from: 'frontend', to: 'dynamic-update', type: 'data' },
     

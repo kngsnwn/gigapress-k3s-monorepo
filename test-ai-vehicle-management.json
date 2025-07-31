@@ -1,0 +1,567 @@
+{
+  "testScenario": "AI 차량 관리 서비스 개발",
+  "steps": [
+    {
+      "step": 1,
+      "title": "Chat Message - 사용자 요구사항 분석 저장",
+      "endpoint": "POST /api/chat/messages",
+      "data": {
+        "sessionId": "ai-vehicle-session-2024-01-31",
+        "messageId": "msg-vehicle-001",
+        "role": "USER",
+        "content": "AI 기반 차량 관리 시스템을 만들고 싶습니다. 차량 정보, 운전자 정보, 정비 이력, AI 예측 분석 기능이 필요합니다.",
+        "userId": "user-001",
+        "projectId": "ai-vehicle-management",
+        "status": "SENT",
+        "metadata": {
+          "analysisType": "INITIAL_REQUIREMENTS",
+          "confidence": 0.9
+        }
+      }
+    },
+    {
+      "step": 2,
+      "title": "Chat Message - AI 분석 결과 저장",
+      "endpoint": "POST /api/chat/messages", 
+      "data": {
+        "sessionId": "ai-vehicle-session-2024-01-31",
+        "messageId": "msg-vehicle-002",
+        "role": "ASSISTANT",
+        "content": "AI 차량 관리 시스템을 위해 다음 엔티티들을 식별했습니다: Vehicle(차량), Driver(운전자), MaintenanceRecord(정비기록), PredictiveAnalysis(예측분석)",
+        "userId": "user-001",
+        "projectId": "ai-vehicle-management",
+        "status": "SENT",
+        "metadata": {
+          "domainAnalysis": {
+            "entities": ["Vehicle", "Driver", "MaintenanceRecord", "PredictiveAnalysis"],
+            "relationships": [
+              {"from": "Driver", "to": "Vehicle", "type": "ONE_TO_MANY"},
+              {"from": "Vehicle", "to": "MaintenanceRecord", "type": "ONE_TO_MANY"},
+              {"from": "Vehicle", "to": "PredictiveAnalysis", "type": "ONE_TO_MANY"}
+            ],
+            "confidence": 0.95,
+            "analysisType": "DOMAIN_EXTRACTION"
+          }
+        }
+      }
+    },
+    {
+      "step": 3,
+      "title": "API Generation - Vehicle Entity API 생성",
+      "endpoint": "POST /api/generation/generate",
+      "data": {
+        "apiName": "VehicleAPI",
+        "entityName": "Vehicle",
+        "packageName": "com.gigapress.aivehicle.vehicle",
+        "apiPath": "/api/vehicles",
+        "projectId": "ai-vehicle-management",
+        "fields": [
+          {
+            "name": "id",
+            "type": "Long",
+            "required": true,
+            "validation": "PRIMARY_KEY"
+          },
+          {
+            "name": "vehicleNumber",
+            "type": "String",
+            "required": true,
+            "validation": "NOT_NULL,UNIQUE,SIZE(5,20)"
+          },
+          {
+            "name": "make",
+            "type": "String",
+            "required": true,
+            "validation": "NOT_NULL,SIZE(1,50)"
+          },
+          {
+            "name": "model",
+            "type": "String",
+            "required": true,
+            "validation": "NOT_NULL,SIZE(1,50)"
+          },
+          {
+            "name": "year",
+            "type": "Integer",
+            "required": true,
+            "validation": "NOT_NULL,RANGE(1900,2030)"
+          },
+          {
+            "name": "mileage",
+            "type": "Long",
+            "required": true,
+            "validation": "NOT_NULL,MIN(0)"
+          },
+          {
+            "name": "driverId",
+            "type": "Long",
+            "required": true,
+            "validation": "NOT_NULL,FOREIGN_KEY"
+          },
+          {
+            "name": "status",
+            "type": "String",
+            "required": true,
+            "validation": "NOT_NULL,ENUM(ACTIVE,INACTIVE,MAINTENANCE)"
+          },
+          {
+            "name": "registrationDate",
+            "type": "LocalDateTime",
+            "required": true,
+            "validation": "NOT_NULL"
+          }
+        ],
+        "operations": {
+          "CREATE": "POST",
+          "READ": "GET",
+          "UPDATE": "PUT",
+          "DELETE": "DELETE",
+          "LIST": "GET"
+        },
+        "authentication": {
+          "required": true,
+          "type": "JWT",
+          "roles": ["ADMIN", "MANAGER", "USER"]
+        }
+      }
+    },
+    {
+      "step": 4,
+      "title": "API Generation - Driver Entity API 생성",
+      "endpoint": "POST /api/generation/generate",
+      "data": {
+        "apiName": "DriverAPI",
+        "entityName": "Driver",
+        "packageName": "com.gigapress.aivehicle.driver",
+        "apiPath": "/api/drivers",
+        "projectId": "ai-vehicle-management",
+        "fields": [
+          {
+            "name": "id",
+            "type": "Long",
+            "required": true,
+            "validation": "PRIMARY_KEY"
+          },
+          {
+            "name": "licenseNumber",
+            "type": "String",
+            "required": true,
+            "validation": "NOT_NULL,UNIQUE,SIZE(10,20)"
+          },
+          {
+            "name": "firstName",
+            "type": "String",
+            "required": true,
+            "validation": "NOT_NULL,SIZE(1,50)"
+          },
+          {
+            "name": "lastName",
+            "type": "String",
+            "required": true,
+            "validation": "NOT_NULL,SIZE(1,50)"
+          },
+          {
+            "name": "email",
+            "type": "String",
+            "required": true,
+            "validation": "NOT_NULL,EMAIL,UNIQUE"
+          },
+          {
+            "name": "phone",
+            "type": "String",
+            "required": true,
+            "validation": "NOT_NULL,PATTERN(^[0-9-]+$)"
+          },
+          {
+            "name": "dateOfBirth",
+            "type": "LocalDate",
+            "required": true,
+            "validation": "NOT_NULL,PAST"
+          },
+          {
+            "name": "experienceYears",
+            "type": "Integer",
+            "required": true,
+            "validation": "NOT_NULL,MIN(0)"
+          },
+          {
+            "name": "isActive",
+            "type": "Boolean",
+            "required": true,
+            "validation": "NOT_NULL"
+          }
+        ],
+        "operations": {
+          "CREATE": "POST",
+          "READ": "GET", 
+          "UPDATE": "PUT",
+          "DELETE": "DELETE",
+          "LIST": "GET"
+        },
+        "authentication": {
+          "required": true,
+          "type": "JWT",
+          "roles": ["ADMIN", "MANAGER"]
+        }
+      }
+    },
+    {
+      "step": 5,
+      "title": "API Generation - MaintenanceRecord Entity API 생성",
+      "endpoint": "POST /api/generation/generate",
+      "data": {
+        "apiName": "MaintenanceRecordAPI",
+        "entityName": "MaintenanceRecord",
+        "packageName": "com.gigapress.aivehicle.maintenance",
+        "apiPath": "/api/maintenance-records",
+        "projectId": "ai-vehicle-management",
+        "fields": [
+          {
+            "name": "id",
+            "type": "Long",
+            "required": true,
+            "validation": "PRIMARY_KEY"
+          },
+          {
+            "name": "vehicleId",
+            "type": "Long",
+            "required": true,
+            "validation": "NOT_NULL,FOREIGN_KEY"
+          },
+          {
+            "name": "maintenanceType",
+            "type": "String",
+            "required": true,
+            "validation": "NOT_NULL,ENUM(REGULAR,REPAIR,INSPECTION,EMERGENCY)"
+          },
+          {
+            "name": "description",
+            "type": "String",
+            "required": true,
+            "validation": "NOT_NULL,SIZE(10,500)"
+          },
+          {
+            "name": "cost",
+            "type": "BigDecimal",
+            "required": true,
+            "validation": "NOT_NULL,MIN(0)"
+          },
+          {
+            "name": "maintenanceDate",
+            "type": "LocalDateTime",
+            "required": true,
+            "validation": "NOT_NULL"
+          },
+          {
+            "name": "nextMaintenanceDate",
+            "type": "LocalDateTime",
+            "required": false,
+            "validation": "FUTURE"
+          },
+          {
+            "name": "mechanicName",
+            "type": "String",
+            "required": true,
+            "validation": "NOT_NULL,SIZE(2,100)"
+          },
+          {
+            "name": "partsReplaced",
+            "type": "String",
+            "required": false,
+            "validation": "SIZE(0,1000)"
+          }
+        ],
+        "operations": {
+          "CREATE": "POST",
+          "READ": "GET",
+          "UPDATE": "PUT", 
+          "DELETE": "DELETE",
+          "LIST": "GET"
+        },
+        "authentication": {
+          "required": true,
+          "type": "JWT",
+          "roles": ["ADMIN", "MANAGER", "MECHANIC"]
+        }
+      }
+    },
+    {
+      "step": 6,
+      "title": "Business Logic Generation - Vehicle Service 생성",
+      "endpoint": "POST /api/business-logic/generate",
+      "data": {
+        "entityName": "Vehicle",
+        "packageName": "com.gigapress.aivehicle.vehicle",
+        "patternType": "SERVICE",
+        "fields": [
+          {
+            "name": "vehicleNumber",
+            "type": "String",
+            "required": true,
+            "unique": true,
+            "constraints": ["UNIQUE_VALIDATION", "FORMAT_CHECK"]
+          },
+          {
+            "name": "mileage",
+            "type": "Long",
+            "required": true,
+            "unique": false,
+            "constraints": ["POSITIVE_VALUE", "MILEAGE_INCREMENT_CHECK"]
+          },
+          {
+            "name": "status",
+            "type": "String",
+            "required": true,
+            "unique": false,
+            "constraints": ["ENUM_VALIDATION"]
+          }
+        ],
+        "businessRules": [
+          {
+            "name": "unique_vehicle_number",
+            "description": "차량번호는 시스템 전체에서 유일해야 함",
+            "condition": "vehicleNumber not exists in database",
+            "action": "throw VehicleNumberAlreadyExistsException",
+            "priority": 1
+          },
+          {
+            "name": "mileage_increment_only",
+            "description": "주행거리는 감소할 수 없음",
+            "condition": "new mileage >= current mileage",
+            "action": "throw InvalidMileageException",
+            "priority": 2
+          },
+          {
+            "name": "active_driver_required",
+            "description": "활성 상태 차량은 운전자가 배정되어야 함",
+            "condition": "status = ACTIVE implies driverId is not null",
+            "action": "throw DriverRequiredException",
+            "priority": 3
+          },
+          {
+            "name": "maintenance_status_check",
+            "description": "정비중인 차량은 운행할 수 없음", 
+            "condition": "status = MAINTENANCE implies cannot be assigned to driver",
+            "action": "throw VehicleInMaintenanceException",
+            "priority": 4
+          }
+        ],
+        "validations": [
+          {
+            "fieldName": "vehicleNumber",
+            "validationType": "PATTERN",
+            "errorMessage": "차량번호 형식이 올바르지 않습니다 (예: 12가1234)",
+            "parameters": {
+              "pattern": "^[0-9]{2}[가-힣][0-9]{4}$"
+            }
+          },
+          {
+            "fieldName": "year",
+            "validationType": "RANGE",
+            "errorMessage": "차량 연식은 1900년부터 현재년도+1년까지 가능합니다",
+            "parameters": {
+              "min": 1900,
+              "max": 2025
+            }
+          },
+          {
+            "fieldName": "mileage",
+            "validationType": "RANGE",
+            "errorMessage": "주행거리는 0 이상이어야 합니다",
+            "parameters": {
+              "min": 0,
+              "max": 9999999
+            }
+          }
+        ],
+        "additionalConfig": {
+          "generateTests": true,
+          "includeSwagger": true,
+          "databaseType": "POSTGRESQL",
+          "enableAuditing": true,
+          "generateRepository": true,
+          "generateController": true
+        }
+      }
+    },
+    {
+      "step": 7,
+      "title": "Business Logic Generation - AI Predictive Analysis Service 생성",
+      "endpoint": "POST /api/business-logic/generate",
+      "data": {
+        "entityName": "PredictiveAnalysis",
+        "packageName": "com.gigapress.aivehicle.ai",
+        "patternType": "SERVICE",
+        "fields": [
+          {
+            "name": "vehicleId",
+            "type": "Long",
+            "required": true,
+            "unique": false,
+            "constraints": ["FOREIGN_KEY_VALIDATION"]
+          },
+          {
+            "name": "predictionType",
+            "type": "String",
+            "required": true,
+            "unique": false,
+            "constraints": ["ENUM_VALIDATION"]
+          },
+          {
+            "name": "confidenceScore",
+            "type": "BigDecimal",
+            "required": true,
+            "unique": false,
+            "constraints": ["RANGE_VALIDATION"]
+          },
+          {
+            "name": "predictionData",
+            "type": "String",
+            "required": true,
+            "unique": false,
+            "constraints": ["JSON_VALIDATION"]
+          }
+        ],
+        "businessRules": [
+          {
+            "name": "confidence_score_range",
+            "description": "AI 예측 신뢰도는 0.0~1.0 범위여야 함",
+            "condition": "confidenceScore >= 0.0 AND confidenceScore <= 1.0",
+            "action": "throw InvalidConfidenceScoreException",
+            "priority": 1
+          },
+          {
+            "name": "prediction_data_validation",
+            "description": "예측 데이터는 유효한 JSON 형식이어야 함",
+            "condition": "predictionData is valid JSON",
+            "action": "throw InvalidPredictionDataException",
+            "priority": 2
+          },
+          {
+            "name": "vehicle_exists_check",
+            "description": "예측 분석 대상 차량이 존재해야 함",
+            "condition": "vehicleId exists in Vehicle table",
+            "action": "throw VehicleNotFoundException",
+            "priority": 3
+          },
+          {
+            "name": "maintenance_prediction_logic",
+            "description": "정비 예측시 최소 데이터 요구사항 확인",
+            "condition": "predictionType = MAINTENANCE implies mileage and lastMaintenanceDate present",
+            "action": "throw InsufficientDataException",
+            "priority": 4
+          }
+        ],
+        "validations": [
+          {
+            "fieldName": "predictionType",
+            "validationType": "PATTERN",
+            "errorMessage": "예측 타입은 MAINTENANCE, FAILURE, PERFORMANCE 중 하나여야 합니다",
+            "parameters": {
+              "pattern": "^(MAINTENANCE|FAILURE|PERFORMANCE)$"
+            }
+          },
+          {
+            "fieldName": "confidenceScore",
+            "validationType": "RANGE",
+            "errorMessage": "신뢰도 점수는 0.0과 1.0 사이여야 합니다",
+            "parameters": {
+              "min": 0.0,
+              "max": 1.0
+            }
+          },
+          {
+            "fieldName": "predictionData",
+            "validationType": "SIZE",
+            "errorMessage": "예측 데이터는 최대 5000자까지 입력 가능합니다",
+            "parameters": {
+              "min": 10,
+              "max": 5000
+            }
+          }
+        ],
+        "additionalConfig": {
+          "generateTests": true,
+          "includeSwagger": true,
+          "databaseType": "POSTGRESQL",
+          "enableAuditing": true,
+          "generateRepository": true,
+          "generateController": true,
+          "enableCaching": true,
+          "aiServiceIntegration": true
+        }
+      }
+    }
+  ],
+  "expectedOutputStructure": {
+    "outputPath": "C:/Users/ksw/Desktop/dev/gigapress-light/output/ai-vehicle-management",
+    "structure": {
+      "src/main/java/com/gigapress/aivehicle/": {
+        "vehicle/": [
+          "Vehicle.java (Entity)",
+          "VehicleRepository.java (Repository)",
+          "VehicleService.java (Service Interface)",
+          "VehicleServiceImpl.java (Service Implementation)",
+          "VehicleController.java (REST Controller)",
+          "VehicleDto.java (Data Transfer Objects)",
+          "VehicleMapper.java (MapStruct Mapper)"
+        ],
+        "driver/": [
+          "Driver.java (Entity)",
+          "DriverRepository.java (Repository)",
+          "DriverService.java (Service Interface)",
+          "DriverServiceImpl.java (Service Implementation)",
+          "DriverController.java (REST Controller)",
+          "DriverDto.java (Data Transfer Objects)",
+          "DriverMapper.java (MapStruct Mapper)"
+        ],
+        "maintenance/": [
+          "MaintenanceRecord.java (Entity)",
+          "MaintenanceRecordRepository.java (Repository)",
+          "MaintenanceRecordService.java (Service Interface)",
+          "MaintenanceRecordServiceImpl.java (Service Implementation)",
+          "MaintenanceRecordController.java (REST Controller)",
+          "MaintenanceRecordDto.java (Data Transfer Objects)",
+          "MaintenanceRecordMapper.java (MapStruct Mapper)"
+        ],
+        "ai/": [
+          "PredictiveAnalysis.java (Entity)",
+          "PredictiveAnalysisRepository.java (Repository)",
+          "PredictiveAnalysisService.java (Service Interface)",
+          "PredictiveAnalysisServiceImpl.java (Service Implementation)",
+          "PredictiveAnalysisController.java (REST Controller)",
+          "PredictiveAnalysisDto.java (Data Transfer Objects)",
+          "PredictiveAnalysisMapper.java (MapStruct Mapper)",
+          "AIModelService.java (AI Integration Service)"
+        ],
+        "config/": [
+          "VehicleManagementConfig.java (Configuration)",
+          "SecurityConfig.java (Security Configuration)",  
+          "SwaggerConfig.java (API Documentation)"
+        ],
+        "exception/": [
+          "VehicleNotFoundException.java",
+          "VehicleNumberAlreadyExistsException.java",
+          "InvalidMileageException.java",
+          "DriverRequiredException.java",
+          "VehicleInMaintenanceException.java",
+          "InvalidConfidenceScoreException.java",
+          "InvalidPredictionDataException.java",
+          "InsufficientDataException.java"
+        ]
+      },
+      "src/main/resources/": [
+        "application.properties",
+        "db/migration/ (Flyway migrations)",
+        "templates/ (Thymeleaf templates if needed)"
+      ],
+      "src/test/java/com/gigapress/aivehicle/": [
+        "vehicle/VehicleServiceTest.java",
+        "driver/DriverServiceTest.java", 
+        "maintenance/MaintenanceRecordServiceTest.java",
+        "ai/PredictiveAnalysisServiceTest.java",
+        "integration/ (Integration tests)"
+      ]
+    }
+  }
+}

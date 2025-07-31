@@ -13,6 +13,7 @@ export default function ConnectionStatus() {
       text: 'Connected',
       className: 'text-green-500',
       bgClassName: 'bg-green-500/10',
+      animate: false,
     },
     connecting: {
       icon: Loader2,
@@ -26,12 +27,14 @@ export default function ConnectionStatus() {
       text: 'Disconnected',
       className: 'text-gray-500',
       bgClassName: 'bg-gray-500/10',
+      animate: false,
     },
     error: {
       icon: AlertCircle,
       text: 'Connection Error',
       className: 'text-red-500',
       bgClassName: 'bg-red-500/10',
+      animate: false,
     },
   };
 

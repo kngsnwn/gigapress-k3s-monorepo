@@ -3,7 +3,12 @@ from typing import Dict, Any
 from pydantic import BaseModel, Field
 from datetime import datetime
 import uuid
+import time
+import logging
 
+from app.services.ai_service import ai_service
+
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -22,19 +27,49 @@ class ConversationResponse(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
+@router.post("/process", response_model=ConversationResponse)
+async def process_conversation(request: ConversationRequest) -> ConversationResponse:
+    """Process a conversation message - main endpoint for frontend"""
+    try:
+        start_time = time.time()
+        logger.info(f"Processing message from session {request.session_id}: {request.message[:100]}...")
+        
+        # Generate AI response
+        response = await ai_service.generate_response(
+            user_message=request.message,
+            conversation_history=request.context.get("history", []),
+            stream=False
+        )
+        
+        processing_time = time.time() - start_time
+        provider_info = ai_service.get_provider_info()
+        
+        logger.info(f"Generated response in {processing_time:.2f}s using {provider_info['current_provider']}")
+        
+        return ConversationResponse(
+            response=response,
+            session_id=request.session_id,
+            metadata={
+                "provider": provider_info["current_provider"],
+                "available_providers": provider_info["available_providers"],
+                "processing_time": processing_time,
+                "tokens": len(request.message.split()),
+                "response_tokens": len(str(response).split())
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Error processing conversation: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to process conversation: {str(e)}"
+        )
+
+
 @router.post("/chat", response_model=ConversationResponse)
 async def chat(request: ConversationRequest) -> ConversationResponse:
-    """Process a conversation message"""
-    # Placeholder implementation
-    return ConversationResponse(
-        response=f"Echo: {request.message} (This is a placeholder response)",
-        session_id=request.session_id,
-        metadata={
-            "model": "placeholder",
-            "tokens": len(request.message.split()),
-            "processing_time": 0.0
-        }
-    )
+    """Process a conversation message - legacy endpoint"""
+    return await process_conversation(request)
 
 
 @router.get("/sessions/{session_id}")

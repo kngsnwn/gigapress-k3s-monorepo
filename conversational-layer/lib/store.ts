@@ -44,6 +44,7 @@ interface ConversationStore {
   setPendingMessageId: (id: string | null) => void;
   incrementRetryCount: () => void;
   resetRetryCount: () => void;
+  resetUIState: () => void;
   
   // Services
   services: Service[];
@@ -193,6 +194,12 @@ export const useConversationStore = create<ConversationStore>((set, get) => ({
   setPendingMessageId: (id) => set({ pendingMessageId: id }),
   incrementRetryCount: () => set((state) => ({ retryCount: state.retryCount + 1 })),
   resetRetryCount: () => set({ retryCount: 0 }),
+  resetUIState: () => set({ 
+    isTyping: false, 
+    pendingMessageId: null, 
+    lastError: null,
+    retryCount: 0
+  }),
   
   // Services
   services: [],

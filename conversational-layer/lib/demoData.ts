@@ -236,16 +236,6 @@ export const demoServices: Service[] = [
     endpoint: 'http://localhost:8002'
   },
   {
-    id: 'domain-schema-service',
-    name: 'Domain Schema Service',
-    port: 8003,
-    status: 'running',
-    description: '도메인 스키마 관리',
-    required: true,
-    modes: ['beginner', 'expert', 'admin'],
-    endpoint: 'http://localhost:8003'
-  },
-  {
     id: 'backend-service',
     name: 'Backend Service',
     port: 8004,

@@ -6,6 +6,7 @@ from langchain.schema import HumanMessage, AIMessage
 
 from app.core.langchain_config import langchain_service
 from app.services.chains import chain_service
+from app.services.ai_service import ai_service
 from app.models.conversation import ConversationSession, Message
 from app.core.exceptions import ValidationException
 
@@ -22,6 +23,7 @@ class ConversationService:
         """Initialize conversation service"""
         await langchain_service.initialize()
         await chain_service.initialize()
+        await ai_service.initialize()
         logger.info("Conversation service initialized")
     
     async def process_message(
@@ -43,14 +45,23 @@ class ConversationService:
             )
             session.messages.append(user_message)
             
-            # Analyze intent
+            # Prepare conversation history for AI service
+            conversation_history = []
+            for msg in session.messages[:-1]:  # Exclude the just-added user message
+                conversation_history.append({
+                    "role": msg.role,
+                    "content": msg.content
+                })
+            
+            # Generate response using AI service
+            response = await ai_service.generate_response(
+                user_message=message,
+                conversation_history=conversation_history,
+                stream=False
+            )
+            
+            # Analyze intent (keep for backward compatibility)
             intent_analysis = await langchain_service.analyze_intent(message)
-            
-            # Get conversation chain
-            chain = await langchain_service.get_conversation_chain(session_id)
-            
-            # Generate response
-            response = await chain.arun(input=message)
             
             # Add AI response to history
             ai_message = Message(
@@ -95,15 +106,23 @@ class ConversationService:
             )
             session.messages.append(user_message)
             
-            # Stream response
-            chain = await langchain_service.get_conversation_chain(session_id)
+            # Prepare conversation history for AI service
+            conversation_history = []
+            for msg in session.messages[:-1]:  # Exclude the just-added user message
+                conversation_history.append({
+                    "role": msg.role,
+                    "content": msg.content
+                })
             
+            # Stream response using AI service
             full_response = ""
-            async for token in chain.astream({"input": message}):
-                if "response" in token:
-                    chunk = token["response"]
-                    full_response += chunk
-                    yield chunk
+            async for chunk in await ai_service.generate_response(
+                user_message=message,
+                conversation_history=conversation_history,
+                stream=True
+            ):
+                full_response += chunk
+                yield chunk
             
             # Save complete response
             ai_message = Message(

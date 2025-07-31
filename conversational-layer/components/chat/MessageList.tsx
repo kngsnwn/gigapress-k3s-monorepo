@@ -12,7 +12,7 @@ interface MessageListProps {
 
 export default function MessageList({ onSendExample }: MessageListProps) {
   const messages = useConversationStore((state) => state.messages);
-  const isTestMode = useConversationStore((state) => state.isTestMode);
+  const isDemoMode = useConversationStore((state) => state.isDemoMode);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { t } = useI18n();
 
@@ -27,28 +27,31 @@ export default function MessageList({ onSendExample }: MessageListProps) {
 
   if (messages.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center space-y-4 max-w-md">
-          <h2 className="text-2xl font-semibold">{t.chat.welcomeTitle}</h2>
-          <p className="text-muted-foreground">
+      <div className="flex items-center justify-center h-full bg-white dark:bg-gray-950">
+        <div className="text-center space-y-6 max-w-md px-4">
+          <div className="w-16 h-16 mx-auto bg-green-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
+            AI
+          </div>
+          <h2 className="text-3xl font-semibold text-gray-900 dark:text-gray-100">{t.chat.welcomeTitle}</h2>
+          <p className="text-gray-600 dark:text-gray-400 text-lg">
             {t.chat.startConversation}
           </p>
-          {!isTestMode && (
-            <div className="grid grid-cols-1 gap-2 text-sm">
+          {!isDemoMode && (
+            <div className="grid grid-cols-1 gap-3 text-sm mt-8">
               <button 
-                className="p-3 text-left rounded-lg border border-border hover:bg-accent transition-colors"
+                className="p-4 text-left rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
                 onClick={() => onSendExample?.(t.chat.example1)}
               >
                 {t.chat.example1}
               </button>
               <button 
-                className="p-3 text-left rounded-lg border border-border hover:bg-accent transition-colors"
+                className="p-4 text-left rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
                 onClick={() => onSendExample?.(t.chat.example2)}
               >
                 {t.chat.example2}
               </button>
               <button 
-                className="p-3 text-left rounded-lg border border-border hover:bg-accent transition-colors"
+                className="p-4 text-left rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
                 onClick={() => onSendExample?.(t.chat.example3)}
               >
                 {t.chat.example3}
@@ -61,20 +64,24 @@ export default function MessageList({ onSendExample }: MessageListProps) {
   }
 
   return (
-    <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-border">
-      <div className="max-w-4xl mx-auto p-4 space-y-4">
+    <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-border bg-white dark:bg-gray-950">
+      <div className="">
         {messages.map((message, index) => {
           // Enable typing animation for the latest AI message
           const isLatestAIMessage = 
             message.role === 'assistant' && 
             index === messages.length - 1 &&
             message.status === 'sent';
+          
+          // Alternate background for assistant messages
+          const isAlternate = message.role === 'assistant' && index % 2 === 1;
             
           return (
             <MessageItem 
               key={message.id} 
               message={message} 
               enableTypingAnimation={isLatestAIMessage}
+              isAlternate={isAlternate}
             />
           );
         })}

@@ -14,20 +14,10 @@ export const loadTestData = () => {
     });
   }
   
-  // Load demo messages with typing simulation
+  // Load demo messages immediately without typing simulation
   if (store.messages.length === 0) {
-    demoMessages.forEach((message, index) => {
-      setTimeout(() => {
-        if (message.role === 'assistant') {
-          store.setIsTyping(true);
-          setTimeout(() => {
-            store.addMessage(message);
-            store.setIsTyping(false);
-          }, 1500);
-        } else {
-          store.addMessage(message);
-        }
-      }, index * 2000);
+    demoMessages.forEach((message) => {
+      store.addMessage(message);
     });
   }
   

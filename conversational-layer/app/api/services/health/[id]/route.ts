@@ -4,7 +4,6 @@ const serviceEndpoints: Record<string, string> = {
   'conversational-layer': 'http://localhost:8080',
   'conversational-ai-engine': 'http://localhost:8087/health',
   'mcp-server': 'http://localhost:8082/health',
-  'domain-schema-service': 'http://localhost:8083/health',
   'backend-service': 'http://localhost:8084/health',
   'design-frontend-service': 'http://localhost:8085/health',
   'infra-version-control-service': 'http://localhost:8086/health',

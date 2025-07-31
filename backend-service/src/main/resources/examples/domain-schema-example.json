@@ -1,0 +1,209 @@
+{
+  "projectId": "ecommerce-system",
+  "sessionId": "sess-12345",
+  "domainDescription": "E-commerce system with products, customers, and orders",
+  "domainSchema": {
+    "entities": [
+      {
+        "name": "Customer",
+        "displayName": "Customer",
+        "description": "Customer entity representing users who make purchases",
+        "entityType": "TABLE",
+        "auditable": true,
+        "fields": [
+          {
+            "name": "id",
+            "type": "Long",
+            "required": true,
+            "primaryKey": true,
+            "description": "Unique customer identifier"
+          },
+          {
+            "name": "email",
+            "type": "String",
+            "required": true,
+            "unique": true,
+            "maxLength": 255,
+            "pattern": "^[A-Za-z0-9+_.-]+@(.+)$",
+            "description": "Customer email address"
+          },
+          {
+            "name": "firstName",
+            "type": "String",
+            "required": true,
+            "maxLength": 100,
+            "description": "Customer first name"
+          },
+          {
+            "name": "lastName",
+            "type": "String",
+            "required": true,
+            "maxLength": 100,
+            "description": "Customer last name"
+          },
+          {
+            "name": "createdAt",
+            "type": "LocalDateTime",
+            "required": true,
+            "description": "Account creation timestamp"
+          }
+        ],
+        "relationships": [
+          {
+            "sourceEntity": "Customer",
+            "targetEntity": "Order",
+            "relationshipType": "ONE_TO_MANY",
+            "relationshipName": "places",
+            "sourceField": "id",
+            "targetField": "customerId",
+            "description": "Customer can place multiple orders"
+          }
+        ],
+        "businessRules": [
+          {
+            "name": "unique_email",
+            "description": "Customer email must be unique across the system",
+            "type": "CONSTRAINT",
+            "scope": "ENTITY",
+            "targetEntity": "Customer",
+            "condition": "email IS UNIQUE",
+            "databaseEnforced": true,
+            "applicationEnforced": true,
+            "errorMessage": "Email address already exists"
+          }
+        ]
+      },
+      {
+        "name": "Product",
+        "displayName": "Product",
+        "description": "Product entity representing items for sale",
+        "entityType": "TABLE",
+        "fields": [
+          {
+            "name": "id",
+            "type": "Long",
+            "required": true,
+            "primaryKey": true,
+            "description": "Unique product identifier"
+          },
+          {
+            "name": "name",
+            "type": "String",
+            "required": true,
+            "maxLength": 200,
+            "description": "Product name"
+          },
+          {
+            "name": "price",
+            "type": "BigDecimal",
+            "required": true,
+            "minValue": 0.01,
+            "description": "Product price"
+          },
+          {
+            "name": "stockQuantity",
+            "type": "Integer",
+            "required": true,
+            "minValue": 0,
+            "description": "Available stock quantity"
+          }
+        ],
+        "businessRules": [
+          {
+            "name": "positive_price",
+            "description": "Product price must be positive",
+            "type": "VALIDATION",
+            "scope": "FIELD",
+            "targetEntity": "Product",
+            "targetField": "price",
+            "condition": "price > 0",
+            "applicationEnforced": true,
+            "errorMessage": "Product price must be greater than zero"
+          }
+        ]
+      },
+      {
+        "name": "Order",
+        "displayName": "Order",
+        "description": "Order entity representing customer purchases",
+        "entityType": "TABLE",
+        "auditable": true,
+        "fields": [
+          {
+            "name": "id",
+            "type": "Long",
+            "required": true,
+            "primaryKey": true,
+            "description": "Unique order identifier"
+          },
+          {
+            "name": "customerId",
+            "type": "Long",
+            "required": true,
+            "referencedEntity": "Customer",
+            "referencedField": "id",
+            "description": "Reference to customer who placed the order"
+          },
+          {
+            "name": "orderDate",
+            "type": "LocalDateTime",
+            "required": true,
+            "description": "When the order was placed"
+          },
+          {
+            "name": "status",
+            "type": "String",
+            "required": true,
+            "maxLength": 20,
+            "validationRules": ["PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"],
+            "description": "Order status"
+          },
+          {
+            "name": "totalAmount",
+            "type": "BigDecimal",
+            "required": true,
+            "minValue": 0,
+            "description": "Total order amount"
+          }
+        ],
+        "relationships": [
+          {
+            "sourceEntity": "Order",
+            "targetEntity": "Customer",
+            "relationshipType": "MANY_TO_ONE",
+            "relationshipName": "belongs_to",
+            "sourceField": "customerId",
+            "targetField": "id",
+            "required": true,
+            "description": "Order belongs to a customer"
+          }
+        ]
+      }
+    ],
+    "globalBusinessRules": [
+      {
+        "name": "order_total_calculation",
+        "description": "Order total must equal sum of order items",
+        "type": "CALCULATION",
+        "scope": "SCHEMA",
+        "condition": "Order.totalAmount = SUM(OrderItem.quantity * OrderItem.unitPrice)",
+        "applicationEnforced": true
+      }
+    ],
+    "version": "1.0"
+  },
+  "metadata": {
+    "analysisEngineVersion": "1.0.0",
+    "confidenceLevel": 0.95,
+    "analysisMethod": "AI_CONVERSATION",
+    "analysisSources": ["customer_requirements", "business_analyst_interview"],
+    "qualityMetrics": {
+      "completeness": 0.9,
+      "consistency": 0.95,
+      "normalization": 0.85,
+      "relationshipIntegrity": 0.9,
+      "businessRuleCoverage": 0.8,
+      "overallScore": 0.88
+    }
+  }
+}

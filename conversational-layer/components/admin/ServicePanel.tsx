@@ -39,16 +39,6 @@ const initialServices: Service[] = [
     endpoint: 'http://localhost:8082'
   },
   {
-    id: 'domain-schema-service',
-    name: 'Domain Schema Service',
-    port: 8083,
-    status: 'stopped',
-    description: '도메인 모델 및 스키마 관리',
-    required: true,
-    modes: ['beginner', 'expert', 'admin'],
-    endpoint: 'http://localhost:8083'
-  },
-  {
     id: 'backend-service',
     name: 'Backend Service',
     port: 8084,

@@ -11,7 +11,7 @@ from app.core.logging import setup_logging
 from app.api.router import api_router
 from app.core.exceptions import AppException
 from app.utils.health import get_health_status
-from app.socketio_app import sio
+from app.websocket.socketio_server import sio
 
 
 # Setup logging
@@ -99,7 +99,11 @@ app.include_router(api_router, prefix="/api/v1")
 
 # Create combined app with Socket.IO
 import socketio
-socket_app = socketio.ASGIApp(sio, other_asgi_app=app)
+socket_app = socketio.ASGIApp(
+    sio,
+    other_asgi_app=app,
+    socketio_path='socket.io'
+)
 
 
 if __name__ == "__main__":

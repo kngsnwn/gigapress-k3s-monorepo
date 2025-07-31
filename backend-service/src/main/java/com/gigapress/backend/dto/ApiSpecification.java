@@ -10,6 +10,7 @@ public class ApiSpecification {
     private String entityName;
     private String packageName;
     private String apiPath;
+    private String projectId;
     private List<FieldSpecification> fields;
     private Map<String, String> operations;
     private AuthenticationRequirement authentication;

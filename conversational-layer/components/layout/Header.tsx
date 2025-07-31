@@ -1,10 +1,8 @@
 'use client'
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { useConversationStore } from '@/lib/store';
-import { demoProjects, demoMessages, demoProgressUpdates } from '@/lib/demoData';
-import { websocketService } from '@/lib/websocket';
 import { 
   Sun, 
   Moon, 
@@ -14,8 +12,6 @@ import {
   WifiOff,
   Sparkles,
   Laptop,
-  ToggleLeft,
-  ToggleRight,
   Baby,
   GraduationCap,
   Shield,
@@ -25,72 +21,24 @@ import {
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/lib/i18n';
 import { LanguageSelector } from '../LanguageSelector';
-import SettingsModal from '../ui/SettingsModal';
 
 interface HeaderProps {
   onMenuClick: () => void;
 }
 
 export default function Header({ onMenuClick }: HeaderProps) {
+  const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { 
     isConnected, 
-    isDemoMode, 
-    setIsDemoMode,
-    setCurrentProject,
-    addMessage,
-    addProgressUpdate,
-    clearMessages,
-    clearProgress,
-    addProject,
-    userMode,
-    projects,
-    clearProjects
+    isDemoMode,
+    userMode
   } = useConversationStore();
   const { t } = useI18n();
 
-  const toggleMode = async () => {
-    const newMode = !isDemoMode;
-    setIsDemoMode(newMode);
-    
-    if (newMode) {
-      // Switch to demo mode
-      console.log('Switching to demo mode');
-      websocketService.disconnect();
-      clearMessages();
-      clearProgress();
-      
-      // Add demo data
-      demoProjects.forEach(project => addProject(project));
-      demoMessages.forEach(msg => addMessage(msg));
-      demoProgressUpdates.forEach(update => addProgressUpdate(update));
-      setCurrentProject(demoProjects[0]);
-    } else {
-      // Switch to real mode
-      console.log('Switching to real mode');
-      clearMessages();
-      clearProgress();
-      setCurrentProject(null);
-      
-      // Reconnect WebSocket properly
-      const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8087';
-      websocketService.reconnect(wsUrl);
-    }
-  };
 
   const resetToHome = () => {
-    // Clear all data and reset to initial state
-    clearMessages();
-    clearProgress();
-    clearProjects();
-    
-    // If in demo mode, reload demo data
-    if (isDemoMode) {
-      // Add demo data back
-      demoProjects.forEach(project => addProject(project));
-      setCurrentProject(demoProjects[0]);
-    }
+    router.push('/');
   };
 
   return (
@@ -142,24 +90,32 @@ export default function Header({ onMenuClick }: HeaderProps) {
           )}
         </div>
 
-        {/* Mode Toggle */}
+        {/* Mode Selection Button */}
         <button
-          onClick={toggleMode}
+          onClick={() => router.push('/mode-selection')}
           className="palantir-button px-3 py-1"
-          title={isDemoMode ? 'Switch to Real Mode' : 'Switch to Demo Mode'}
+          title="환경 선택"
         >
+          <span className="flex items-center gap-1">
+            <Settings size={12} />
+            환경 선택
+          </span>
+        </button>
+
+        {/* Current Mode Display */}
+        <div className="palantir-badge">
           {isDemoMode ? (
             <span className="flex items-center gap-1">
-              <Laptop size={12} />
-              Demo
+              <Laptop size={12} className="text-blue-500" />
+              테스트
             </span>
           ) : (
             <span className="flex items-center gap-1">
               <Wifi size={12} className="text-green-500" />
-              Live
+              운영
             </span>
           )}
-        </button>
+        </div>
 
         {/* Connection Status (only show in real mode) */}
         {!isDemoMode && (
@@ -206,19 +162,15 @@ export default function Header({ onMenuClick }: HeaderProps) {
           </button>
 
           <button
-            onClick={() => setIsSettingsOpen(true)}
+            onClick={() => router.push('/mode-selection')}
             className="palantir-icon-button"
-            title="Settings"
+            title="환경 선택"
           >
             <Settings size={14} />
           </button>
         </div>
       </div>
 
-      <SettingsModal 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
-      />
     </header>
   );
 }

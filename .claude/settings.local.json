@@ -48,7 +48,18 @@
       "Bash(taskkill:*)",
       "Bash(tskill:*)",
       "Bash(findstr:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(grep:*)",
+      "Bash(rm:*)",
+      "Bash(cat:*)",
+      "Bash(timeout:*)",
+      "Bash(npm run build:*)",
+      "Bash(mkdir:*)",
+      "Bash(echo:*)",
+      "Bash(git checkout:*)",
+      "Bash(tasklist:*)",
+      "Bash(docker-compose stop:*)",
+      "Bash(docker volume:*)"
     ],
     "deny": []
   }

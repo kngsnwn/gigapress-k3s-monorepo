@@ -3,8 +3,12 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   trailingSlash: false,
+  swcMinify: true,
   images: {
     domains: ['localhost'],
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
   },
   async rewrites() {
     return [

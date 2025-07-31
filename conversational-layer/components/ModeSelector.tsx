@@ -32,14 +32,14 @@ export default function ModeSelector({ onClose }: ModeSelectorProps) {
       title: t.modeSelector.beginner,
       description: t.modeSelector.beginnerDesc,
       color: 'text-blue-500',
-      services: ['conversational-layer', 'conversational-ai-engine', 'mcp-server', 'domain-schema-service', 'backend-service']
+      services: ['conversational-layer', 'conversational-ai-engine', 'mcp-server', 'backend-service']
     },
     expert: {
       icon: GraduationCap,
       title: t.modeSelector.expert,
       description: t.modeSelector.expertDesc,
       color: 'text-purple-500',
-      services: ['conversational-layer', 'conversational-ai-engine', 'mcp-server', 'domain-schema-service', 'backend-service', 'design-frontend-service', 'infra-version-control-service', 'dynamic-update-engine']
+      services: ['conversational-layer', 'conversational-ai-engine', 'mcp-server', 'backend-service', 'design-frontend-service', 'infra-version-control-service', 'dynamic-update-engine']
     },
     admin: {
       icon: Shield,

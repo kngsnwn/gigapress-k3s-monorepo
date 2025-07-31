@@ -101,8 +101,7 @@ export default function ProjectProgressPage() {
       // Simulate data flow animation
       const flowSequence = [
         ['ai-engine', 'mcp-server'],
-        ['mcp-server', 'domain-schema'],
-        ['domain-schema', 'backend'],
+        ['mcp-server', 'backend'],
         ['backend', 'frontend'],
         ['frontend', 'dynamic-update']
       ];
